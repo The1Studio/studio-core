@@ -3,17 +3,17 @@
  *
  * Flow:
  * 1. createContainer() - Create empty container
- * 2. Load preset module - Pre-configured bindings
+ * 2. Load CoreModule - All service bindings
  * 3. Load overrides - Optional custom bindings
  * 4. validateContainer() - Ensure required services exist
  *
  * @example
- * const container = await composeContainer({ preset: 'mock' });
+ * const container = await composeContainer();
  */
 
 import { Container, type ContainerModule } from 'inversify';
 import { TOKENS } from './tokens';
-import { getPreset, type PresetName } from './modules/presets';
+import { CoreModule } from './modules/core.module';
 
 // ============================================
 // Container Creation
@@ -80,43 +80,38 @@ export function assertContainerValid(container: Container): void {
 // ============================================
 
 export interface ComposeOptions {
-  /** Preset name - use pre-configured module from @studio/core */
-  preset: PresetName;
-  /** Optional override module for custom bindings */
+  /** Optional override module for custom bindings (use rebind to replace) */
   overrides?: ContainerModule;
   /** Skip validation (for testing) */
   skipValidation?: boolean;
 }
 
 /**
- * Create and configure container using a preset
- *
- * This is the main entry point for setting up DI.
- * Uses preset modules from @studio/core for zero-config setup.
+ * Create and configure container with all services
  *
  * @example
- * // Simple - use preset directly
- * const container = await composeContainer({ preset: 'mock' });
+ * // Simple - use defaults
+ * const container = await composeContainer();
  *
- * // With custom overrides
+ * // With custom overrides (e.g., Firebase auth)
  * const container = await composeContainer({
- *   preset: 'mock',
- *   overrides: MyCustomModule,
+ *   overrides: new ContainerModule((opts) => {
+ *     opts.rebind(TOKENS.Auth.Service).to(FirebaseAuthService);
+ *   })
  * });
  */
 export async function composeContainer(
-  options: ComposeOptions,
+  options: ComposeOptions = {},
 ): Promise<Container> {
-  const { preset, overrides, skipValidation = false } = options;
+  const { overrides, skipValidation = false } = options;
 
   // 1. Create container
   const container = createContainer();
 
-  // 2. Load preset module
-  const presetModule = getPreset(preset);
-  container.load(presetModule);
+  // 2. Load core module (all services)
+  container.load(CoreModule);
 
-  // 3. Load overrides (optional custom bindings)
+  // 3. Load overrides (optional - use rebind to replace services)
   if (overrides) {
     container.load(overrides);
   }

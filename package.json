@@ -12,7 +12,13 @@
     "reflect-metadata": "^0.2.2"
   },
   "peerDependencies": {
-    "react": "*"
+    "react": "*",
+    "expo-secure-store": "*"
+  },
+  "peerDependenciesMeta": {
+    "expo-secure-store": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/react": "~19.1.0",

@@ -47,7 +47,6 @@ export function useContainer(): Container {
  */
 export function useService<T>(token: symbol): T {
   const container = useContainer();
-  console.log('Resolving service for token:', token.toString(), container);
   return useMemo(() => container.get<T>(token), [container, token]);
 }
 

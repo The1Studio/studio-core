@@ -5,7 +5,7 @@
  *
  * Quick Start:
  * 1. Import this package first (loads reflect-metadata)
- * 2. Compose container with a preset
+ * 2. Compose container
  * 3. Wrap app with DIProvider
  * 4. Use useService() in components
  *
@@ -13,7 +13,7 @@
  * import '@studio/core';
  * import { composeContainer, DIProvider, useService, TOKENS, type IAuthService } from '@studio/core';
  *
- * const container = await composeContainer({ preset: 'mock' });
+ * const container = await composeContainer();
  * <DIProvider container={container}><App /></DIProvider>
  *
  * // In components:

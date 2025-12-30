@@ -2,14 +2,14 @@
  * DI Infrastructure
  *
  * Flow:
- * 1. tokens.ts         - Service identifiers
- * 2. modules/presets/  - Pre-configured service bindings
- * 3. setup.ts          - Container creation & composition
- * 4. react/            - React hooks & components
+ * 1. tokens.ts    - Service identifiers
+ * 2. core.module  - All service bindings
+ * 3. setup.ts     - Container creation & composition
+ * 4. react/       - React hooks & components
  *
  * @example
- * // App entry - just use a preset
- * const container = await composeContainer({ preset: 'mock' });
+ * // App entry
+ * const container = await composeContainer();
  *
  * <DIProvider container={container}>
  *   <App />
@@ -22,8 +22,8 @@
 // 1. Tokens - Service identifiers
 export { TOKENS, type TokenKey } from './tokens';
 
-// 2. Presets - Pre-configured modules
-export { MockPresetModule, type PresetName } from './modules/presets';
+// 2. Core Module - All service bindings
+export { CoreModule } from './modules/core.module';
 
 // 3. Setup - Container creation
 export {
