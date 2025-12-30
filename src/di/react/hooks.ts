@@ -47,6 +47,7 @@ export function useContainer(): Container {
  */
 export function useService<T>(token: symbol): T {
   const container = useContainer();
+  console.log('Resolving service for token:', token.toString(), container);
   return useMemo(() => container.get<T>(token), [container, token]);
 }
 
@@ -60,7 +61,7 @@ export function useService<T>(token: symbol): T {
  * });
  */
 export function useServices<T extends Record<string, symbol>>(
-  tokens: T,
+  tokens: T
 ): { [K in keyof T]: unknown } {
   const container = useContainer();
 

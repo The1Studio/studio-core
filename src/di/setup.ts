@@ -3,17 +3,17 @@
  *
  * Flow:
  * 1. createContainer() - Create empty container
- * 2. Load BaseModule - Default bindings
- * 3. Load ClientModule - Client-specific overrides
+ * 2. Load preset module - Pre-configured bindings
+ * 3. Load overrides - Optional custom bindings
  * 4. validateContainer() - Ensure required services exist
  *
  * @example
- * const container = await composeContainer({ clientId: 'my-client' });
+ * const container = await composeContainer({ preset: 'mock' });
  */
 
 import { Container, type ContainerModule } from 'inversify';
 import { TOKENS } from './tokens';
-import { clientRegistry } from './registry';
+import { getPreset, type PresetName } from './modules/presets';
 
 // ============================================
 // Container Creation
@@ -80,42 +80,45 @@ export function assertContainerValid(container: Container): void {
 // ============================================
 
 export interface ComposeOptions {
-  /** Client ID from EXPO_PUBLIC_CLIENT_ID */
-  clientId: string;
-  /** Optional base module with default bindings */
-  baseModule?: ContainerModule;
+  /** Preset name - use pre-configured module from @studio/core */
+  preset: PresetName;
+  /** Optional override module for custom bindings */
+  overrides?: ContainerModule;
   /** Skip validation (for testing) */
   skipValidation?: boolean;
 }
 
 /**
- * Create and configure container for a specific client
+ * Create and configure container using a preset
  *
  * This is the main entry point for setting up DI.
+ * Uses preset modules from @studio/core for zero-config setup.
  *
  * @example
- * // In app entry point
+ * // Simple - use preset directly
+ * const container = await composeContainer({ preset: 'mock' });
+ *
+ * // With custom overrides
  * const container = await composeContainer({
- *   clientId: process.env.EXPO_PUBLIC_CLIENT_ID || 'default',
+ *   preset: 'mock',
+ *   overrides: MyCustomModule,
  * });
  */
 export async function composeContainer(
   options: ComposeOptions,
 ): Promise<Container> {
-  const { clientId, baseModule, skipValidation = false } = options;
+  const { preset, overrides, skipValidation = false } = options;
 
   // 1. Create container
   const container = createContainer();
 
-  // 2. Load base module (default bindings)
-  if (baseModule) {
-    container.load(baseModule);
-  }
+  // 2. Load preset module
+  const presetModule = getPreset(preset);
+  container.load(presetModule);
 
-  // 3. Load client module (overrides)
-  const clientModule = await clientRegistry.load(clientId);
-  if (clientModule) {
-    container.load(clientModule);
+  // 3. Load overrides (optional custom bindings)
+  if (overrides) {
+    container.load(overrides);
   }
 
   // 4. Validate

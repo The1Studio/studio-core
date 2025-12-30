@@ -1,11 +1,11 @@
 /**
  * @studio/core
  *
- * DI infrastructure for multi-client React Native applications.
+ * DI infrastructure for React Native applications.
  *
  * Quick Start:
  * 1. Import this package first (loads reflect-metadata)
- * 2. Compose container with client ID
+ * 2. Compose container with a preset
  * 3. Wrap app with DIProvider
  * 4. Use useService() in components
  *
@@ -13,7 +13,7 @@
  * import '@studio/core';
  * import { composeContainer, DIProvider, useService, TOKENS, type IAuthService } from '@studio/core';
  *
- * const container = await composeContainer({ clientId: 'my-client' });
+ * const container = await composeContainer({ preset: 'mock' });
  * <DIProvider container={container}><App /></DIProvider>
  *
  * // In components:
