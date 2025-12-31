@@ -23,3 +23,7 @@ export * from './storage/IStorageService';
 // Analytics domain
 export * from './analytics/types';
 export * from './analytics/IAnalyticsService';
+
+// User domain
+export * from './user/IUserService';
+export { CreateUserDto, UpdateUserDto } from './user/types';

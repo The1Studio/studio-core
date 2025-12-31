@@ -33,6 +33,16 @@ export const TOKENS = {
   Analytics: {
     Service: Symbol.for('Analytics.Service'),
   },
+
+  /** User: CRUD operations */
+  User: {
+    Service: Symbol.for('User.Service'),
+  },
+
+  /** HTTP: API client */
+  Http: {
+    Client: Symbol.for('Http.Client'),
+  },
 } as const;
 
 export type TokenKey = typeof TOKENS;

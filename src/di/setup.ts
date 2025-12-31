@@ -3,15 +3,19 @@
  *
  * Flow:
  * 1. createContainer() - Create empty container
- * 2. Load CoreModule - All service bindings
- * 3. Load overrides - Optional custom bindings
- * 4. validateContainer() - Ensure required services exist
+ * 2. Bind apiClient (from @repo/core)
+ * 3. Load CoreModule - All service bindings
+ * 4. Load overrides - Optional custom bindings
+ * 5. validateContainer() - Ensure required services exist
  *
  * @example
- * const container = await composeContainer();
+ * import { createApiClient } from '@repo/core';
+ * const apiClient = createApiClient({ baseURL, refreshEndpoint });
+ * const container = await composeContainer({ apiClient });
  */
 
 import { Container, type ContainerModule } from 'inversify';
+import type { AxiosInstance } from 'axios';
 import { TOKENS } from './tokens';
 import { CoreModule } from './modules/core.module';
 
@@ -37,7 +41,10 @@ export interface ValidationResult {
 }
 
 /** Services that MUST be bound for app to work */
-const REQUIRED_TOKENS = [{ token: TOKENS.Auth.Service, name: 'Auth.Service' }];
+const REQUIRED_TOKENS = [
+  { token: TOKENS.Auth.Service, name: 'Auth.Service' },
+  { token: TOKENS.Http.Client, name: 'Http.Client' },
+];
 
 /**
  * Check if container has all required services
@@ -80,6 +87,8 @@ export function assertContainerValid(container: Container): void {
 // ============================================
 
 export interface ComposeOptions {
+  /** Configured axios instance from @repo/core createApiClient() */
+  apiClient: AxiosInstance;
   /** Optional override module for custom bindings (use rebind to replace) */
   overrides?: ContainerModule;
   /** Skip validation (for testing) */
@@ -90,33 +99,36 @@ export interface ComposeOptions {
  * Create and configure container with all services
  *
  * @example
- * // Simple - use defaults
- * const container = await composeContainer();
+ * import { createApiClient } from '@repo/core';
  *
- * // With custom overrides (e.g., Firebase auth)
- * const container = await composeContainer({
- *   overrides: new ContainerModule((opts) => {
- *     opts.rebind(TOKENS.Auth.Service).to(FirebaseAuthService);
- *   })
+ * const apiClient = createApiClient({
+ *   baseURL: 'https://api.example.com',
+ *   refreshEndpoint: '/auth/refresh',
+ *   onRefreshFailed: () => navigation.navigate('Login'),
  * });
+ *
+ * const container = await composeContainer({ apiClient });
  */
 export async function composeContainer(
-  options: ComposeOptions = {},
+  options: ComposeOptions,
 ): Promise<Container> {
-  const { overrides, skipValidation = false } = options;
+  const { apiClient, overrides, skipValidation = false } = options;
 
   // 1. Create container
   const container = createContainer();
 
-  // 2. Load core module (all services)
+  // 2. Bind apiClient (from @repo/core)
+  container.bind(TOKENS.Http.Client).toConstantValue(apiClient);
+
+  // 3. Load core module (all services)
   container.load(CoreModule);
 
-  // 3. Load overrides (optional - use rebind to replace services)
+  // 4. Load overrides (optional - use rebind to replace services)
   if (overrides) {
     container.load(overrides);
   }
 
-  // 4. Validate
+  // 5. Validate
   if (!skipValidation) {
     assertContainerValid(container);
   }
