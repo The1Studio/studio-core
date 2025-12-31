@@ -24,11 +24,9 @@ export const TOKENS = {
     Gateway: Symbol.for('Payment.Gateway'),
   },
 
-  /** Storage: local, secure, remote */
+  /** Storage: secure storage (Keychain/Keystore) */
   Storage: {
-    Local: Symbol.for('Storage.Local'),
     Secure: Symbol.for('Storage.Secure'),
-    Remote: Symbol.for('Storage.Remote'),
   },
 
   /** Analytics: event tracking */

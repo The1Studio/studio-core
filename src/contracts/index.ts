@@ -18,7 +18,6 @@ export * from './payment/types';
 export * from './payment/IPaymentService';
 
 // Storage domain
-export * from './storage/types';
 export * from './storage/IStorageService';
 
 // Analytics domain

@@ -56,7 +56,7 @@ export function useService<T>(token: symbol): T {
  * @example
  * const { auth, storage } = useServices({
  *   auth: TOKENS.Auth.Service,
- *   storage: TOKENS.Storage.Local,
+ *   storage: TOKENS.Storage.Secure,
  * });
  */
 export function useServices<T extends Record<string, symbol>>(

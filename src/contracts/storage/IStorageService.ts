@@ -1,5 +1,3 @@
-import type { StorageOptions } from './types';
-
 /**
  * Storage service contract
  *
@@ -8,39 +6,19 @@ import type { StorageOptions } from './types';
  * - SecureStorageService (Keychain/Keystore)
  *
  * @example
- * const storage = useService<IStorageService>(TOKENS.Storage.Local);
- * await storage.set('user', { name: 'John' });
- * const user = await storage.get<User>('user');
+ * const storage = useService<IStorageService>(TOKENS.Storage.Secure);
+ * await storage.setString('token', 'abc123');
+ * const token = await storage.getString('token');
  */
 export interface IStorageService {
-  /**
-   * Get a value by key
-   * @returns The value or null if not found/expired
-   */
-  get<T = unknown>(key: string): Promise<T | null>;
+  // String
+  getString(key: string): Promise<string | null>;
+  setString(key: string, value: string): Promise<void>;
 
-  /**
-   * Set a value with optional TTL
-   */
-  set<T = unknown>(key: string, value: T, options?: StorageOptions): Promise<void>;
+  // Object (JSON)
+  getObject<T>(key: string): Promise<T | null>;
+  setObject<T>(key: string, value: T): Promise<void>;
 
-  /**
-   * Remove a value by key
-   */
+  // Delete
   remove(key: string): Promise<void>;
-
-  /**
-   * Check if a key exists
-   */
-  has(key: string): Promise<boolean>;
-
-  /**
-   * Get all keys
-   */
-  keys(): Promise<string[]>;
-
-  /**
-   * Clear all storage
-   */
-  clear(): Promise<void>;
 }
