@@ -3,12 +3,14 @@ import { TOKENS } from '../tokens';
 import { CustomAuthService } from '../../services/auth/custom-auth.service';
 import { SecureStorageService } from '../../services/storage/secure-storage.service';
 import { UserService } from '../../services/user/user.service';
+import { MockPaymentService } from '../../services/payment/mock-payment.service';
 
 /**
  * Core Module - Binds all core services
  *
  * Services:
  * - Auth.Service: CustomAuthService (mock implementation)
+ * - Payment.Service: MockPaymentService (mock implementation)
  * - Storage.Secure: SecureStorageService (expo-secure-store)
  * - User.Service: UserService (CRUD with apiClient)
  *
@@ -24,6 +26,9 @@ export const CoreModule = new ContainerModule((options) => {
 
   // Auth
   bind(TOKENS.Auth.Service).to(CustomAuthService).inSingletonScope();
+
+  // Payment
+  bind(TOKENS.Payment.Service).to(MockPaymentService).inSingletonScope();
 
   // Storage
   bind(TOKENS.Storage.Secure).to(SecureStorageService).inSingletonScope();
