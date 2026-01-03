@@ -1,4 +1,4 @@
-import type { Credentials, AuthResponse, User } from './types';
+import type { Credentials, RegisterData, AuthResponse, User } from './types';
 
 /**
  * Authentication Service Contract
@@ -25,6 +25,12 @@ export interface IAuthService {
    * @throws Error if authentication fails
    */
   login(credentials: Credentials): Promise<AuthResponse>;
+
+  /**
+   * Register new user with email/password
+   * @throws Error if registration fails
+   */
+  register(data: RegisterData): Promise<AuthResponse>;
 
   /**
    * Sign out current user and clear tokens

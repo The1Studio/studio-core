@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import type {
   IAuthService,
   Credentials,
+  RegisterData,
   AuthResponse,
   User,
 } from '../../contracts';
@@ -29,6 +30,26 @@ export class CustomAuthService implements IAuthService {
       id: 'user-1',
       email: credentials.email,
       name: credentials.email.split('@')[0],
+    };
+
+    this.currentUser = user;
+
+    return {
+      user,
+      token: 'mock-jwt-token',
+      refreshToken: 'mock-refresh-token',
+    };
+  }
+
+  async register(data: RegisterData): Promise<AuthResponse> {
+    // TODO: Replace with actual API call
+    console.log('[Auth] Register attempt:', data.email);
+
+    // Simulate API response
+    const user: User = {
+      id: 'user-new',
+      email: data.email,
+      name: data.name || data.email.split('@')[0],
     };
 
     this.currentUser = user;

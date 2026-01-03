@@ -13,6 +13,15 @@ export interface Credentials {
 }
 
 /**
+ * User registration data
+ */
+export interface RegisterData {
+  email: string;
+  password: string;
+  name?: string;
+}
+
+/**
  * Authenticated user data
  */
 export interface User {

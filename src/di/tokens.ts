@@ -16,6 +16,8 @@ export const TOKENS = {
   Auth: {
     Service: Symbol.for('Auth.Service'),
     TokenManager: Symbol.for('Auth.TokenManager'),
+    /** Firebase Auth instance - bind from client app */
+    FirebaseAuth: Symbol.for('Auth.FirebaseAuth'),
   },
 
   /** Payments: processing, gateways */

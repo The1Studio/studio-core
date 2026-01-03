@@ -18,6 +18,7 @@ import { Container, type ContainerModule } from 'inversify';
 import type { AxiosInstance } from 'axios';
 import { TOKENS } from './tokens';
 import { CoreModule } from './modules/core.module';
+import { FirebaseAuthService, type FirebaseAuthInstance } from '../services/auth/firebase-auth.service';
 
 // ============================================
 // Container Creation
@@ -89,6 +90,8 @@ export function assertContainerValid(container: Container): void {
 export interface ComposeOptions {
   /** Configured axios instance from @repo/core createApiClient() */
   apiClient: AxiosInstance;
+  /** Firebase Auth instance - if provided, uses FirebaseAuthService */
+  firebaseAuth?: FirebaseAuthInstance;
   /** Optional override module for custom bindings (use rebind to replace) */
   overrides?: ContainerModule;
   /** Skip validation (for testing) */
@@ -112,7 +115,7 @@ export interface ComposeOptions {
 export async function composeContainer(
   options: ComposeOptions,
 ): Promise<Container> {
-  const { apiClient, overrides, skipValidation = false } = options;
+  const { apiClient, firebaseAuth, overrides, skipValidation = false } = options;
 
   // 1. Create container
   const container = createContainer();
@@ -123,12 +126,19 @@ export async function composeContainer(
   // 3. Load core module (all services)
   container.load(CoreModule);
 
-  // 4. Load overrides (optional - use rebind to replace services)
+  // 4. Bind Firebase Auth if provided (replaces default auth service)
+  if (firebaseAuth) {
+    container.bind(TOKENS.Auth.FirebaseAuth).toConstantValue(firebaseAuth);
+    container.unbind(TOKENS.Auth.Service);
+    container.bind(TOKENS.Auth.Service).to(FirebaseAuthService).inSingletonScope();
+  }
+
+  // 5. Load overrides (optional - use rebind to replace services)
   if (overrides) {
     container.load(overrides);
   }
 
-  // 5. Validate
+  // 6. Validate
   if (!skipValidation) {
     assertContainerValid(container);
   }
